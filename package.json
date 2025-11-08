@@ -1,5 +1,5 @@
 {
-  "name": "csv-json",
+  "name": "csv-jsparser",
   "version": "1.0.0",
   "description": "package from json to csv and csv to json",
   "main": "index.js",
