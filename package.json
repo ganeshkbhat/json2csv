@@ -1,0 +1,26 @@
+{
+  "name": "json2csv",
+  "version": "1.0.0",
+  "description": "package from json to csv and csv to json",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --reporter spec --recursive --timeout 60000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ganeshkbhat/json2csv.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ganeshkbhat/json2csv/issues"
+  },
+  "homepage": "https://github.com/ganeshkbhat/json2csv#readme",
+  "devDependencies": {
+    "chai": "^6.2.0",
+    "mocha": "^11.7.5",
+    "sinon": "^21.0.0"
+  }
+}
