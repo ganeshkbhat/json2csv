@@ -17,7 +17,7 @@ function parseCsv(csv, separator = ',') {
     let currentRow = [];
     let currentField = '';
     let inQuotes = false;
-    
+
     // Append a newline to ensure the final field and row are processed by the loop
     const data = csv.trim() + '\n';
 
@@ -43,7 +43,7 @@ function parseCsv(csv, separator = ',') {
             // Logic when not inside a quoted field
             if (char === '"') {
                 // Starting double quote. Clear leading whitespace if present.
-                currentField = ''; 
+                currentField = '';
                 inQuotes = true;
             } else if (char === separator) {
                 // Delimiter found: end of field
@@ -57,12 +57,12 @@ function parseCsv(csv, separator = ',') {
 
                 // Push the last field of the row
                 currentRow.push(currentField.trim());
-                
+
                 // Only push the row if it contains data
                 if (currentRow.some(cell => cell.length > 0)) {
                     rows.push(currentRow);
                 }
-                
+
                 currentRow = [];
                 currentField = '';
             } else {
@@ -86,7 +86,7 @@ function csvToJson(csv, hasHeaders = true, separator = ',') {
     if (!csv) {
         return [];
     }
-    
+
     // Use the robust parser with the specified separator
     const values = parseCsv(csv, separator);
 
@@ -173,8 +173,83 @@ function jsonToCsv(data, headers, separator = ',') {
     return [headerRow, ...dataRows].join('\n');
 }
 
+/**
+ * Helper function to escape special XML characters.
+ * @param {string} str The string to escape.
+ * @returns {string} The escaped string.
+ */
+function xmlEscape(str) {
+    if (typeof str !== 'string') return '';
+    return str.replace(/[&<>"']/g, function (match) {
+        switch (match) {
+            case '&':
+                return '&amp;';
+            case '<':
+                return '&lt;';
+            case '>':
+                return '&gt;';
+            case '"':
+                return '&quot;';
+            case "'":
+                return '&apos;';
+            default:
+                return match;
+        }
+    });
+}
+
+/**
+ * Converts a JSON array of objects into an XML string.
+ * @param {Array<Object>} data The JSON array of objects.
+ * @param {string} rootName The name of the root XML element. Defaults to 'root'.
+ * @param {string} rowName The name of the element for each object/row. Defaults to 'row'.
+ * @returns {string} The resulting XML string.
+ */
+function jsonToXml(data, rootName = 'root', rowName = 'row') {
+    if (!data || data.length === 0) {
+        return `<?xml version="1.0" encoding="UTF-8"?>\n<${rootName}/>`;
+    }
+
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<${rootName}>\n`;
+
+    data.forEach(item => {
+        xml += `  <${rowName}>\n`;
+        for (const key in item) {
+            if (Object.prototype.hasOwnProperty.call(item, key)) {
+                // Use the key as the element name
+                const escapedKey = key.replace(/[^a-zA-Z0-9_]/g, ''); // Simple sanitization
+                const escapedValue = xmlEscape(String(item[key] === null ? '' : item[key]));
+
+                // Indent content for readability
+                xml += `    <${escapedKey}>${escapedValue}</${escapedKey}>\n`;
+            }
+        }
+        xml += `  </${rowName}>\n`;
+    });
+
+    xml += `</${rootName}>`;
+    return xml;
+}
+
+/**
+ * Converts a delimited string (CSV) into an XML string.
+ * @param {string} csv The delimited string content.
+ * @param {string} separator The field delimiter (e.g., ',', '|', ';'). Defaults to ','.
+ * @param {string} rootName The name of the root XML element. Defaults to 'root'.
+ * @param {string} rowName The name of the element for each object/row. Defaults to 'row'.
+ * @returns {string} The resulting XML string.
+ */
+function csvToXml(csv, separator = ',', rootName = 'root', rowName = 'row') {
+    const jsonData = csvToJson(csv, true, separator);
+    return jsonToXml(jsonData, rootName, rowName);
+}
+
+
 module.exports = {
     parseCsv,
     csvToJson,
-    jsonToCsv
+    jsonToCsv,
+    csvToXml,
+    jsonToXml,
+
 }
