@@ -1,7 +1,18 @@
 // --- Functions under Test (Copied from csv_converter.js for self-containment) ---
+/**
+ * @fileoverview Node.js script to convert a CSV-like string (with any separator)
+ * into a JSON array of objects and vice-versa, with robust handling for 
+ * quoted fields and custom delimiters.
+ */
 
-// Helper function to robustly parse CSV into a 2D array of strings.
-function parseCsv(csv) {
+/**
+ * Helper function to robustly parse a delimited string into a 2D array of strings,
+ * respecting double quotes for fields containing the separator, newlines, or quotes.
+ * @param {string} csv The delimited string content.
+ * @param {string} separator The field delimiter (e.g., ',', '|', ';'). Defaults to ','.
+ * @returns {Array<Array<string>>} A 2D array of parsed field values.
+ */
+function parseCsv(csv, separator = ',') {
     const rows = [];
     let currentRow = [];
     let currentField = '';
@@ -25,7 +36,7 @@ function parseCsv(csv) {
                     inQuotes = false;
                 }
             } else {
-                // Inside quotes, append any character (including delimiters or newlines)
+                // Inside quotes, append any character (including the separator or newlines)
                 currentField += char;
             }
         } else {
@@ -34,7 +45,7 @@ function parseCsv(csv) {
                 // Starting double quote. Clear leading whitespace if present.
                 currentField = ''; 
                 inQuotes = true;
-            } else if (char === ',') {
+            } else if (char === separator) {
                 // Delimiter found: end of field
                 currentRow.push(currentField.trim());
                 currentField = '';
@@ -64,14 +75,20 @@ function parseCsv(csv) {
     return rows;
 }
 
-// Function to convert a 2D array (from parseCsv) into a JSON array of objects
-function csvToJson(csv, hasHeaders = true) {
+/**
+ * Converts a delimited string into a JSON array of objects.
+ * @param {string} csv The delimited string content.
+ * @param {boolean} hasHeaders If true, the first row is used as headers. Defaults to true.
+ * @param {string} separator The field delimiter (e.g., ',', '|', ';'). Defaults to ','.
+ * @returns {Array<Object>} The resulting JSON array.
+ */
+function csvToJson(csv, hasHeaders = true, separator = ',') {
     if (!csv) {
         return [];
     }
     
-    // Use the robust parser
-    const values = parseCsv(csv);
+    // Use the robust parser with the specified separator
+    const values = parseCsv(csv, separator);
 
     if (values.length === 0) {
         return [];
@@ -107,8 +124,14 @@ function csvToJson(csv, hasHeaders = true) {
     return result;
 }
 
-// Function to convert a JSON array of objects back into a CSV string
-function jsonToCsv(data, headers) {
+/**
+ * Converts a JSON array of objects back into a delimited string.
+ * @param {Array<Object>} data The JSON array of objects.
+ * @param {Array<string>} [headers] Optional array of headers to define column order.
+ * @param {string} separator The field delimiter (e.g., ',', '|', ';'). Defaults to ','.
+ * @returns {string} The resulting delimited string content.
+ */
+function jsonToCsv(data, headers, separator = ',') {
     if (!data || data.length === 0) {
         return '';
     }
@@ -121,8 +144,8 @@ function jsonToCsv(data, headers) {
         // Coerce value to string, using empty string for null/undefined
         let str = (value === null || value === undefined) ? '' : String(value);
 
-        // Check if quoting is required: contains comma, double quote, or newline
-        const needsQuotes = str.includes(',') || str.includes('"') || str.includes('\n') || str.includes('\r');
+        // Check if quoting is required: contains the separator, double quote, or newline
+        const needsQuotes = str.includes(separator) || str.includes('"') || str.includes('\n') || str.includes('\r');
 
         if (needsQuotes) {
             // Escape double quotes by doubling them up (" -> "")
@@ -135,7 +158,7 @@ function jsonToCsv(data, headers) {
     };
 
     // 2. Generate Header Row
-    const headerRow = finalHeaders.map(h => formatCell(h)).join(',');
+    const headerRow = finalHeaders.map(h => formatCell(h)).join(separator);
 
     // 3. Generate Data Rows
     const dataRows = data.map(obj => {
@@ -143,7 +166,7 @@ function jsonToCsv(data, headers) {
             // Use property value or empty string if property is missing
             const value = obj[header];
             return formatCell(value);
-        }).join(',');
+        }).join(separator);
     });
 
     // 4. Combine all parts with newline separators
