@@ -1,6 +1,7 @@
 # json2csv
 package from json to csv and csv to json
 
+[demo files here](https://github.com/ganeshkbhat/json2csv/tree/main/demos)
 
 ```
 const { parseCsv,
