@@ -1,9 +1,13 @@
 # json2csv
 package from json to csv and csv to json
 
+####
+
+
 #### parseCsv
 
 *** converts csv to json object
+
 usage for parseCsv: `parseCsv(csv, separator = ',')`
 csv is csv read text that can be parsed. seperator can be anything that seperates values like csv
 
