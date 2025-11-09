@@ -251,5 +251,5 @@ module.exports = {
     jsonToCsv,
     csvToXml,
     jsonToXml,
-
+    xmlEscape
 }
