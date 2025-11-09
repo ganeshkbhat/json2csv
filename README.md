@@ -14,6 +14,9 @@ const simpleJson = [
 const csvResult3 = jsonToCsv(simpleJson, specificHeaders, ';');
 console.log(csvResult3);
 
+```
+
+```
 // --- Example Usage 1: Pipe-separated Data to JSON Conversion ---
 const pipeSeparatedData = `
 "Name"|"Value"|"Note"
