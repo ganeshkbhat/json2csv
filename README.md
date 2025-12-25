@@ -64,7 +64,7 @@ csv is the csv to read that can be parsed. seperator can be anything that sepera
 
 ### csvToXml
 
-*** converts csv to cml
+*** converts csv to xml
 
 `csvToXml(csv, separator = ',', rootName = 'root', rowName = 'row')`
 
