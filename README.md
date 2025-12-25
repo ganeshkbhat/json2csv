@@ -42,32 +42,34 @@ console.log(csvResult2);
 
 *** converts csv to json object
 
-usage for parseCsv: `parseCsv(csv, separator = ',')`
-csv is csv read text that can be parsed. seperator can be anything that seperates values like csv
+`parseCsv(csv, separator = ',')`
+
+
+csv is the csv to read that can be parsed. seperator can be anything that seperates values like csv
 
 
 ### csvToJson
 
 *** converts csv to json
 
-usage for csvToJson: `csvToJson(csv, hasHeaders = true, separator = ',')`
+`csvToJson(csv, hasHeaders = true, separator = ',')`
 
 
 ### jsonToCsv
 
 *** converts json to csv
 
-usage for jsonToCsv:  `jsonToCsv(data, headers, separator = ',')`
+`jsonToCsv(data, headers, separator = ',')`
 
 
 ### csvToXml
 
 *** converts csv to cml
 
-usage for csvToXml: `csvToXml(csv, separator = ',', rootName = 'root', rowName = 'row')`
+`csvToXml(csv, separator = ',', rootName = 'root', rowName = 'row')`
 
 
 ### jsonToXml
 
-usage for jsonToXml: `jsonToXml(data, rootName = 'root', rowName = 'row')`
+`jsonToXml(data, rootName = 'root', rowName = 'row')`
 
